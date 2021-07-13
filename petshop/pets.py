@@ -3,6 +3,7 @@ import datetime
 from flask import Blueprint
 from flask import render_template, request, redirect, url_for, jsonify
 from flask import g
+from flask.wrappers import Request
 
 from . import db
 
@@ -83,8 +84,11 @@ def edit(pid):
     elif request.method == "POST":
         description = request.form.get('description')
         sold = request.form.get("sold")
-        if sold=="on":
-            cursor.execute(f"update pet set sold=? where id = ?", [str(datetime.date.today()),pid])
+        if not sold:
+            sold=request.get_json()['sold']
+        if sold=="on" or sold=='1':
+            print("Triggered")
+            cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
             conn.commit()
         return redirect(url_for("pets.pet_info", pid=pid), 302)
         
