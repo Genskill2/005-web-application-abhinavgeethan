@@ -85,7 +85,8 @@ def edit(pid):
         description = request.form.get('description')
         sold = request.form.get("sold")
         if not (sold and description):
-            resp=request.get_json()
+            resp=request.json
+            # print(resp['description'])
             if "sold" in resp.keys():
                 sold=resp['sold']
                 if sold=="on" or sold=='1':
