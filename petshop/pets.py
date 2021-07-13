@@ -84,12 +84,17 @@ def edit(pid):
     elif request.method == "POST":
         description = request.form.get('description')
         sold = request.form.get("sold")
-        if not sold:
-            sold=request.get_json()['sold']
-        if sold=="on" or sold=='1':
-            print("Triggered")
-            cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
-            conn.commit()
+        if not (sold and description):
+            resp=request.get_json()
+            if "sold" in resp.keys():
+                sold=resp['sold']
+                if sold=="on" or sold=='1':
+                    cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
+                    conn.commit()
+            elif "description" in resp.keys():
+                description=resp['description']
+                cursor.execute("update pet set description=? where id=?",[description, pid])
+                conn.commit()
         return redirect(url_for("pets.pet_info", pid=pid), 302)
         
     
