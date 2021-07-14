@@ -82,21 +82,34 @@ def edit(pid):
                     tags = tags)
         return render_template("editpet.html", **data)
     elif request.method == "POST":
-        description = request.form.get('description')
-        sold = request.form.get("sold")
-        if not (sold and description):
-            resp=request.get_json(force=True)
-            print(resp)
-            if "sold" in resp.keys():
-                sold=resp['sold']
-                if sold=="on" or sold=='1':
-                    cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
-                    conn.commit()
-            elif "description" in resp.keys():
-                description=resp['description']
-                cursor.execute("update pet set description=? where id=?",[description, pid])
-                conn.commit()
-        return redirect(url_for("pets.pet_info", pid=pid), 302)
+    	description = request.form.get('description')
+    	sold = request.form.get("sold")
+    	print(sold)
+    	if not (sold and description):
+    		resp=request.get_json(force=True)
+    		print(resp)
+    		if "sold" in resp.keys():
+    			sold=resp['sold']
+    			if sold=="on" or sold=='1':
+    				cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
+    				conn.commit()
+    		elif "description" in resp.keys():
+    			description=resp['description']
+    			cursor.execute("update pet set description=? where id=?",[description, pid])
+    			conn.commit()
+    	elif (sold and description):
+    		if (sold=="on"):
+    			cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
+    			conn.commit()
+    		cursor.execute("update pet set description=? where id=?",[description, pid])
+    		conn.commit()
+    	elif sold=="on":
+    		cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
+    		conn.commit()
+    	elif description:
+    		cursor.execute("update pet set description=? where id=?",[description, pid])
+    		conn.commit()
+    	return redirect(url_for("pets.pet_info", pid=pid), 302)
         
     
 
