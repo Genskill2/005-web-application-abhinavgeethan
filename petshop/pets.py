@@ -112,7 +112,7 @@ def edit(pid):
     		print("Sold Updated")
     	elif description:
     		print("Desc triggered")
-    		cursor.execute("update pet set description=? where id=?",[description, pid])
+    		cursor.execute(f"update pet set description=? where id=?",[description, pid])
     		conn.commit()
     		print("Desc Updated")
     		print(len(description))
