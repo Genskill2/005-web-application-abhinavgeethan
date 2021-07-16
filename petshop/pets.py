@@ -84,31 +84,38 @@ def edit(pid):
     elif request.method == "POST":
     	description = request.form.get('description')
     	sold = request.form.get("sold")
-    	print(sold)
-    	if not (sold and description):
+    	print("Form: "+sold if sold else None)
+    	print("Form Desc: "+description if description else None)
+    	if not sold and not description:
     		resp=request.get_json(force=True)
-    		print(resp)
+    		print("API: "+resp if resp else None)
     		if "sold" in resp.keys():
     			sold=resp['sold']
     			if sold=="on" or sold=='1':
     				cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
     				conn.commit()
+    				print("Sold Updated")
     		elif "description" in resp.keys():
     			description=resp['description']
     			cursor.execute("update pet set description=? where id=?",[description, pid])
     			conn.commit()
     	elif (sold and description):
-    		if (sold=="on"):
+    		if (sold=="on" or sold=="1"):
     			cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
     			conn.commit()
+    			print("Sold Updated")
     		cursor.execute("update pet set description=? where id=?",[description, pid])
     		conn.commit()
-    	elif sold=="on":
+    	elif sold=="on" or sold=="1":
     		cursor.execute(f"update pet set sold=?,bought=? where id = ?", [str(datetime.date.today()),str(datetime.date.today()),pid])
     		conn.commit()
+    		print("Sold Updated")
     	elif description:
+    		print("Desc triggered")
     		cursor.execute("update pet set description=? where id=?",[description, pid])
     		conn.commit()
+    		print("Desc Updated")
+    		print(len(description))
     	return redirect(url_for("pets.pet_info", pid=pid), 302)
         
     
