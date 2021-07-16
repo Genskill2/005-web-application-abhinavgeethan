@@ -12,7 +12,7 @@
   {% else %}
   <span class="soldstatus badge rounded-pill bg-primary">Available for sale</span>
   {%endif%}
-  </h6>
+  <p class="description">{{description}}</p>
   {% for t in tags %}
   <a class="tag" href="{{url_for('pets.search', field='tag', value=t)}}"><span class="badge bg-secondary">{{t}}</span></a>
   {% endfor %}
